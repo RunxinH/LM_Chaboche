@@ -18,5 +18,6 @@ This Python script is designed to fit the Chaboche material model to experimenta
 * 'pandas'
 
 # File structure
-main.py: Contains the main script to load data, fit the model, and save results.
+LM_Model.py: Contains the main script to load data, fitting process, and save results.
+Error_cal.py: Contains the script to calculate the SSE and R square.
 data.csv: Example CSV file containing 'Strain (%)' and 'Stress' columns.
