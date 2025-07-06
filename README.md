@@ -6,6 +6,7 @@
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Modules](#modules)
+- [Function Descriptions](#function-descriptions)
 - [Contributions and extensions](#contributions-and-extensions)
 - [Acknowledgements](#acknowledgements)
 
@@ -68,10 +69,21 @@ python Error_cal.py
 * `LM_Model.py` - Chaboche model, LM optimization, and data fitting.
 * `Error_cal.py` - Calculate SSE and R² for fitted vs experimental data.
 
-# Usage example
-* Place your experimental data CSV in the working directory. Required columns: `Strain 1 (%)`, `Stress`.
-* Update the file paths in the scripts (`filepath`, `save_file_path`, etc.).
-* Run the fitting and error calculation scripts.
+# Function Descriptions
+
+Function | Description
+---  |---
+`load_real_data(filepath)` | *Parameters*: `filepath`: path to the experimental data CSV file. Expected columns: `Strain 1 (%)`, `Stress`. <br>*Returns*: `strain_data`: numpy array of strain values (converted from percent to decimal), `stress_data`: numpy array of stress values.
+`chaboche_model(strain, params)` | *Parameters*: `strain`: numpy array of input strain data; `params`: list of model parameters `[C1, r1, C2, r2, C3, r3, Q, b]`. <br>*Returns*: `sigma`: numpy array of predicted stress values using the Chaboche model.
+`cal_deriv(params, strain, param_index)` | *Parameters*: `params`: list of model parameters; `strain`: numpy array of strain values; `param_index`: index of the parameter for derivative calculation. <br>*Returns*: Numerical derivative (numpy array) of stress with respect to the selected parameter.
+`cal_Hessian_LM(Jacobian, u, num_params)` | *Parameters*: `Jacobian`: Jacobian matrix of residuals; `u`: damping factor for LM algorithm; `num_params`: total number of parameters. <br>*Returns*: `H`: Hessian matrix with damping applied.
+`cal_g(Jacobian, residual)` | *Parameters*: `Jacobian`: Jacobian matrix of residuals; `residual`: difference between predicted and experimental stress values. <br>*Returns*: `g`: Gradient vector.
+`cal_step(Hessian_LM, g)` | *Parameters*: `Hessian_LM`: Hessian matrix; `g`: Gradient vector. <br>*Returns*: `step`: parameter update step (numpy array). Uses pseudo-inverse if the Hessian is singular.
+`cal_Jacobian(params, input_data)` | *Parameters*: `params`: list of model parameters; `input_data`: strain data. <br>*Returns*: `J`: Jacobian matrix (numpy array), containing derivatives of stress with respect to each parameter.
+`cal_residual(params, input_data, output_data)` | *Parameters*: `params`: list of model parameters; `input_data`: strain data; `output_data`: experimental stress data. <br>*Returns*: `residual`: difference between experimental and predicted stress (numpy array).
+`LM(num_iter, params, input_data, output_data)` | *Parameters*: `num_iter`: maximum number of LM iterations; `params`: initial parameter guess (numpy array); `input_data`: strain data; `output_data`: stress data. <br>*Returns*: `fitted_params`: optimized model parameters (numpy array).
+`calculate_sse(actual, predicted)` | *Parameters*: `actual`: numpy array of experimental stress; `predicted`: numpy array of model-predicted stress. <br>*Returns*: `sse`: sum of squared errors as a float.
+`calculate_r_squared(actual, predicted)` | *Parameters*: `actual`: numpy array of experimental stress; `predicted`: numpy array of model-predicted stress. <br>*Returns*: `r_squared`: coefficient of determination (R²) as a float.
 
 # Contributions and extensions
 This project is open for improvements and collaborative development. Feel free to fork, extend, and submit pull requests. Please contact me first if you plan substantial changes to the model core.
