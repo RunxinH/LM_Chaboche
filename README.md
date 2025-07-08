@@ -1,7 +1,6 @@
 - [Introduction](#introduction)
   * [Chaboche Model](#chaboche-model)
   * [Error Analysis](#error-analysis)
-  * [Moving forward](#moving-forward)
 - [Latest version](#latest-version)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -14,7 +13,7 @@
 This repository provides an open-source implementation of the **Chaboche cyclic plasticity model** using the **Levenberg-Marquardt (LM) optimization algorithm** to fit experimental stress-strain data. 
 It also includes a simple **error analysis script** to evaluate the fitting performance.
 
-The Chaboche model describes the nonlinear kinematic and isotropic hardening behavior under cyclic loading, widely applied in fatigue and plasticity research.
+The Chaboche model describes the nonlinear kinematic and isotropic hardening behavior under cyclic loading, widely applied in fatigue and plasticity research. Note that, currently it is only tested and calibrated for different types of stainless steel so far.
 
 ## Chaboche Model
 The `LM_Model.py` script implements:
@@ -29,12 +28,6 @@ The `Error_cal.py` script calculates:
 * R-squared (R²) values
 
 These metrics provide quantitative insight into the quality of the model fitting.
-
-## Moving forward
-Future improvements may include:
-* Adding support for viscoplasticity.
-* Automating parameter sensitivity analysis.
-* Expanding to temperature-dependent behavior.
 
 # Latest version
 v1.0.0 is the first release of this repository, featuring:
@@ -55,7 +48,7 @@ Clone this repository and install dependencies:
 ```
 git clone https://github.com/yourusername/chaboche-lm.git
 cd chaboche-lm
-pip install -r requirements.txt
+pip install -r 
 ```
 
 Run the model fitting and error analysis:
@@ -86,7 +79,13 @@ Function | Description
 `calculate_r_squared(actual, predicted)` | *Parameters*: `actual`: numpy array of experimental stress; `predicted`: numpy array of model-predicted stress. <br>*Returns*: `r_squared`: coefficient of determination (R²) as a float.
 
 # Contributions and extensions
-This project is open for improvements and collaborative development. Feel free to fork, extend, and submit pull requests. Please contact me first if you plan substantial changes to the model core.
+This project is released under the MIT License and is open for community contributions. Feel free to fork the repository, submit issues, or open pull requests. For major changes, please open an issue first to discuss your proposed modifications.
 
 # Acknowledgements
-This work draws on foundational theories in plasticity and optimization algorithms. Thanks to the broader computational mechanics community for advancing these fields.
+This work builds upon foundational theories in cyclic plasticity and numerical optimization. Special thanks to the scientific community whose work has made this project possible. Key references include:
+
+- Chaboche JL. *A review of some plasticity and viscoplasticity constitutive theories*. International Journal of Plasticity, 2008.
+- Levenberg K. *A method for the solution of certain non-linear problems in least squares*, Quarterly of Applied Mathematics, 1944.
+- Marquardt DW. *An algorithm for least-squares estimation of nonlinear parameters*, SIAM Journal on Applied Mathematics, 1963.
+
+Thanks also to the broader open-source scientific computing community for providing critical tools and inspiration.
