@@ -2,9 +2,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# ============================================================================
-# PARAMETER BOUNDS
-# ============================================================================
 
 def apply_bounds(params, bounds):
     """Apply parameter bounds by clipping values."""
@@ -18,9 +15,6 @@ def apply_bounds(params, bounds):
     
     return bounded_params
 
-# ============================================================================
-# CHABOCHE MODEL
-# ============================================================================
 
 def chaboche_model(strain, params, E, sigmay):
     """Chaboche model implementation."""
@@ -60,9 +54,7 @@ def chaboche_model(strain, params, E, sigmay):
 
     return sigma
 
-# ============================================================================
-# OPTIMIZATION FUNCTIONS
-# ============================================================================
+
 
 def cal_deriv(params, strain, param_index, E, sigmay):
     """Calculate numerical derivative."""
@@ -138,9 +130,7 @@ def LM_bounded(num_iter, params, input_data, output_data, E, sigmay, bounds=None
     print(f"Optimization completed after {k} iterations")
     return params
 
-# ============================================================================
-# MAIN FUNCTION
-# ============================================================================
+
 
 def load_data(filepath):
     """Load experimental data."""
@@ -151,11 +141,11 @@ def load_data(filepath):
 
 def main():
     # Configuration
-    experiment_path = 'C:/Users/huo17/OneDrive - The University of Manchester/LCF/LM_Chaboche/sample_data/sample_data_1-3c.csv'
+    experiment_path = '' # Data file here
     
     # Material properties
-    E = 193000
-    sigmay = 260
+    E = 193000 # Young's Modulus
+    sigmay = 260 # Yield point
     
     # Parameter bounds
     bounds = {
@@ -170,7 +160,7 @@ def main():
     }
     
     # Initial guess
-    initial_guess = np.array([75000, 2300, 25000, 1150, 900, 50, 61, 4])
+    initial_guess = np.array([75000, 2300, 25000, 1000, 1000, 50, 60, 5])# Initial guess
     
     try:
         print("Loading data...")
