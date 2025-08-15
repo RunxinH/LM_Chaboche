@@ -56,24 +56,23 @@ def chaboche_model(strain, params, E, sigmay):
 
 
 
-def cal_deriv(params, strain, param_index, E, sigmay):
+def cal_deriv(params, strain, param_index, E, sigmay, _lambda):
     """Calculate numerical derivative."""
-    h = 1e-8
     params1 = params.copy()
     params2 = params.copy()
-    params1[param_index] += h
-    params2[param_index] -= h
+    params1[param_index] += _lambda
+    params2[param_index] -= _lambda
     sigma1 = chaboche_model(strain, params1, E, sigmay)
     sigma2 = chaboche_model(strain, params2, E, sigmay)
-    return (sigma1 - sigma2) / (2 * h)
+    return (sigma1 - sigma2) / (2 * _lambda)
 
-def cal_Jacobian(params, input_data, E, sigmay):
+def cal_Jacobian(params, input_data, E, sigmay, _lambda):
     """Calculate Jacobian matrix."""
     num_params = len(params)
     num_data = len(input_data)
     J = np.zeros((num_data, num_params))
     for i in range(num_params):
-        J[:, i] = cal_deriv(params, input_data, i, E, sigmay)
+        J[:, i] = cal_deriv(params, input_data, i, E, sigmay, _lambda)
     return J
 
 def cal_residual(params, input_data, output_data, E, sigmay):
@@ -82,7 +81,7 @@ def cal_residual(params, input_data, output_data, E, sigmay):
     residual = output_data - data_est_output
     return residual
 
-def LM_bounded(num_iter, params, input_data, output_data, E, sigmay, bounds=None):
+def LM_bounded(num_iter, params, input_data, output_data, E, sigmay, _lambda = 1e-8, bounds=None):
     """Levenberg-Marquardt with bounds."""
     num_params = len(params)
     k = 0
@@ -95,7 +94,7 @@ def LM_bounded(num_iter, params, input_data, output_data, E, sigmay, bounds=None
     prev_error = np.linalg.norm(residual)
 
     while k < num_iter:
-        Jacobian = cal_Jacobian(params, input_data, E, sigmay)
+        Jacobian = cal_Jacobian(params, input_data, E, sigmay, _lambda)
         A = Jacobian.T.dot(Jacobian)
         g = Jacobian.T.dot(residual)
         u = 1e-3 * np.max(np.diag(A))
@@ -122,8 +121,9 @@ def LM_bounded(num_iter, params, input_data, output_data, E, sigmay, bounds=None
             params = new_params
             residual = new_residual
             prev_error = new_error
-            if k % 10 == 0:
-                print(f"Iteration {k}: Error = {new_error:.6f}")
+            
+        if k % 10 == 0:
+            print(f"Iteration {k}: Error = {new_error:.6f}")
 
         k += 1
     
@@ -141,11 +141,11 @@ def load_data(filepath):
 
 def main():
     # Configuration
-    experiment_path = '' # Data file here
+    experiment_path = 'sample_data/sample_data_1-10c.csv' # Data file here
     
     # Material properties
-    E = 193000 # Young's Modulus
-    sigmay = 260 # Yield point
+    E = 176980 # Young's Modulus
+    sigmay = 246.53 # Yield point
     
     # Parameter bounds
     bounds = {
@@ -160,7 +160,7 @@ def main():
     }
     
     # Initial guess
-    initial_guess = np.array([75000, 2300, 25000, 1000, 1000, 50, 60, 5])# Initial guess
+    initial_guess = np.array([75014.9416, 1526.7128, 25034.4820, 95.7779, 1013.8127, 100.0000, 70.9643, 10])# Initial guess
     
     try:
         print("Loading data...")
@@ -168,7 +168,7 @@ def main():
         print(f"Loaded {len(strain)} data points")
         
         print("\nStarting optimization with bounds...")
-        fitted_params = LM_bounded(200, initial_guess, strain, stress, E, sigmay, bounds)
+        fitted_params = LM_bounded(20, initial_guess, strain, stress, E, sigmay, bounds)
         
         # Results
         predicted_stress = chaboche_model(strain, fitted_params, E, sigmay)
