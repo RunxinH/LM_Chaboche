@@ -1,0 +1,25 @@
+Chaboche Model Fitting Results
+========================================
+
+Input file: C:/Users/huo17/OneDrive - The University of Manchester/LCF/LM_Chaboche/sample_data/sample_data_1-10c.csv
+Data points: 100000
+
+Material Properties:
+  E = 200000 MPa
+  ¦Òy = 250 MPa
+
+Fitted Parameters:
+  C1 = 65652.653963
+  r1 = 498.942895
+  C2 = 22904.619529
+  r2 = 487.218517
+  C3 = 9999.193423
+  r3 = 100.000000
+  Q = 44.345436
+  b = 10.000000
+
+Error Analysis:
+  RMSE = 23.995790 MPa
+  R^2 = 0.997033
+  SSE = 57579794.001122
+  Iterations = 200

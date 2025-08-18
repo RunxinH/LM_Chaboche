@@ -22,7 +22,7 @@ The unified script `LM_Chaboche.py` implements:
 * Export of fitted results and performance metrics.
 
 # Latest version
-v2.0.0 features:
+v1.0.1 features:
 * Merged Chaboche model and error analysis into one script.
 * Improved modularity and code readability.
 * Single-step execution for both fitting and evaluation.
