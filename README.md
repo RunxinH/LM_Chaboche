@@ -22,30 +22,36 @@ The unified script `LM_Chaboche.py` implements:
 * Export of fitted results and performance metrics.
 
 # Latest version
-v1.0.1 features:
-* Merged Chaboche model and error analysis into one script.
-* Improved modularity and code readability.
-* Single-step execution for both fitting and evaluation.
+v1.0.2 features:
+* Added **bounded LM optimization** with customizable parameter constraints.
+* Improved numerical stability with safeguard checks.
+* Enhanced plotting with error metrics overlay.
+* New GUI interface file added (basic launch, no detailed description included here).
 
 # Requirements
 Python ≥ 3.8 is recommended. Required packages:
 * numpy
-* pandas
+* os
+* sys
+* PyQt6
+* qtrangeslider
 * matplotlib
 * scipy
 
 # Installation
-Clone the repository and install dependencies:
-```bash
-git clone https://github.com/yourusername/chaboche-lm.git
-cd chaboche-lm
-pip install -r requirements.txt
+Clone the repository and install dependencies in requirements
 ```
 
-Run the model fitting and evaluation:
+Run an example script-based fit:
 ```bash
 python LM_Chaboche.py
 ```
+
+Run the GUI
+```bash
+python GUI.py
+```
+
 
 # Modules
 * `LM_Chaboche.py` - Core script containing the Chaboche model, LM optimizer, visualization, and error metrics.
@@ -54,16 +60,14 @@ python LM_Chaboche.py
 
 Function | Description
 ---  |---
-`load_real_data(filepath)` | Loads experimental CSV data with columns: `Strain 1 (%)`, `Stress`. Returns strain and stress arrays.
-`chaboche_model(strain, params)` | Computes stress predictions based on Chaboche model and parameter set.
-`cal_Jacobian(params, input_data)` | Returns the Jacobian matrix with partial derivatives of stress w.r.t. parameters.
-`cal_residual(params, input_data, output_data)` | Returns residuals between experimental and model-predicted stress.
-`cal_Hessian_LM(Jacobian, u, num_params)` | Constructs the damped Hessian matrix used in LM updates.
-`cal_g(Jacobian, residual)` | Calculates the gradient vector.
-`cal_step(Hessian_LM, g)` | Solves for parameter update step using Hessian and gradient.
-`LM(num_iter, params, input_data, output_data)` | Main optimization loop for parameter fitting.
-`calculate_sse(actual, predicted)` | Computes sum of squared errors.
-`calculate_r_squared(actual, predicted)` | Computes coefficient of determination (R²).
+`load_real_data(filepath)` | Loads experimental CSV data in the same format as in `sample_data`. 
+`apply_bounds(params, bounds)` | Applies lower/upper bounds to parameters based on user-defined dictionary of ranges. Returns bounded parameter array.
+`chaboche_model(strain, params, E, sigmay)` | Computes stress predictions using the Chaboche constitutive model with three backstresses and isotropic hardening. Returns predicted stress array.
+`cal_Jacobian(params, input_data, E, sigmay, h=1e-6)` | Calculates the numerical Jacobian matrix using finite differences. Returns Jacobian (array shape: [num_data, num_params]).
+`cal_residual(params, input_data, output_data, E, sigmay)` | Computes residuals between experimental data (`output_data`) and model-predicted stress. Returns residual array.
+`LM_bounded(num_iter, params, input_data, output_data, E, sigmay, bounds=None, h=1e-6)` | Performs **bounded Levenberg–Marquardt optimization**. Iteratively updates parameters until convergence. Returns optimized parameter set.
+`main()` | Example workflow: loads sample data, runs optimization, prints parameters, calculates error metrics (SSE, R², RMSE), and plots fitted vs. experimental stress–strain curves.
+
 
 # Contributions and extensions
 This project is released under the MIT License and welcomes contributions. Fork, file issues, or open PRs. For major changes, please open a discussion beforehand.

@@ -1,12 +1,13 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 def load_data(filepath):
     """Load experimental data."""
-    data = pd.read_csv(filepath)
-    strain_data = data['Strain 1 (%)'].values / 100 # Notice percentage or non-percentage for strain
-    stress_data = data['Stress'].values
+    data = np.genfromtxt(filepath, skip_header=1, delimiter=',')
+    #break up data according to relevant columns
+    #assumes incoming np array data has column 5 column being cycle, -2 is strain, -1 is stress
+    strain_data = data[:,[-2]]/100
+    stress_data = data[:,[-1]]
     return strain_data, stress_data
 
 def apply_bounds(params, bounds):
@@ -43,7 +44,7 @@ def chaboche_model(strain, params, E, sigmay):
             sigma[i+1] = sigma[i] + T_sdot
             alphas[i+1] = T_alpha
             ep[i+1] = ep[i]
-            R[i+1] = R[i]  
+            R[i+1] = R[i]
         else:
             # Plastic
             C_alpha = np.array([ 
@@ -67,20 +68,20 @@ def chaboche_model(strain, params, E, sigmay):
     return sigma
 
 
-def cal_deriv(params, strain, param_index, E, sigmay):
-    """Calculate numerical derivative with improved step size."""
-    h = 1e-6
-    params1 = params.copy()
-    params2 = params.copy()
-    step = h * max(abs(params[param_index]), 1.0)
-    params1[param_index] += step
-    params2[param_index] -= step
-    sigma1 = chaboche_model(strain, params1, E, sigmay)
-    sigma2 = chaboche_model(strain, params2, E, sigmay)
-    return (sigma1 - sigma2) / (2 * step)
 
+def cal_Jacobian(params, input_data, E, sigmay,h = 1e-6):
 
-def cal_Jacobian(params, input_data, E, sigmay):
+    def cal_deriv(params, strain, param_index, E, sigmay,h = 1e-6):
+        
+        params1 = params.copy()
+        params2 = params.copy()
+        step = h * max(abs(params[param_index]), 1.0)
+        params1[param_index] += step
+        params2[param_index] -= step
+        sigma1 = chaboche_model(strain, params1, E, sigmay)
+        sigma2 = chaboche_model(strain, params2, E, sigmay)
+        return (sigma1 - sigma2) / (2 * step)
+        
     num_params = len(params)
     num_data = len(input_data)
     J = np.zeros((num_data, num_params))
@@ -95,7 +96,7 @@ def cal_residual(params, input_data, output_data, E, sigmay):
     return residual
 
 
-def LM_bounded_improved(num_iter, params, input_data, output_data, E, sigmay, bounds=None):
+def LM_bounded(num_iter, params, input_data, output_data, E, sigmay, bounds=None, h = 1e-6):
     num_params = len(params)
     k = 0
     
@@ -111,7 +112,7 @@ def LM_bounded_improved(num_iter, params, input_data, output_data, E, sigmay, bo
 
     while k < num_iter:
         try:
-            Jacobian = cal_Jacobian(params, input_data, E, sigmay)
+            Jacobian = cal_Jacobian(params, input_data, E, sigmay,h)
             A = Jacobian.T.dot(Jacobian)
             g = Jacobian.T.dot(residual)
             
@@ -160,7 +161,7 @@ def LM_bounded_improved(num_iter, params, input_data, output_data, E, sigmay, bo
 
 
 def main():
-    experiment_path = 'C:/Users/huo17/OneDrive - The University of Manchester/LCF/LM_Chaboche/sample_data/sample_data_1-10c.csv'
+    experiment_path = 'sample_data\sample_data_1-10c.csv'
     
     E = 183000  # Young's Modulus
     sigmay = 264  # Yield point
@@ -185,7 +186,7 @@ def main():
         strain, stress = load_data(experiment_path)
         print(f"Loaded {len(strain)} data points")
         
-        fitted_params = LM_bounded_improved(50, initial_guess, strain, stress, E, sigmay, bounds)
+        fitted_params = LM_bounded(50, initial_guess, strain, stress, E, sigmay, bounds)
         
         
         predicted_stress = chaboche_model(strain, fitted_params, E, sigmay)

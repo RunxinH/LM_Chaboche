@@ -86,7 +86,7 @@ class main_window(QtWidgets.QWidget):
         iso_layout.addWidget(self.iso_boundaries,0,0,1,1)
         self.iso_input = {}
         iso_labels = ['Q','b']
-        iso_values = [60,5]
+        iso_values = [50, 5]
         i = 0
         for entry in iso_labels:
             self.iso_input[entry] = QtWidgets.QDoubleSpinBox()
@@ -115,7 +115,7 @@ class main_window(QtWidgets.QWidget):
         self.kin_input = {}
         kin_labels = ['C1', 'C2', 'C3', 'C4', 'r1', 'r2', 'r3', 'r4']
         kin_text = ['C\u2081','C\u2082', 'C\u2083', 'C\u2084', 'r\u2081','r\u2082', 'r\u2083', 'r\u2084']
-        kin_values = [75000, 25000, 1000, 0, 2300, 1000, 50, 0]
+        kin_values = [50000, 10000, 5000, 0, 500, 100, 50, 0]
         i = 0
         for entry in kin_labels:
             self.kin_input[entry] = QtWidgets.QDoubleSpinBox()
@@ -149,7 +149,7 @@ class main_window(QtWidgets.QWidget):
         
         self.damping_sb = QtWidgets.QDoubleSpinBox()
         self.damping_sb.setPrefix('\u03BB = ')
-        self.damping_sb.setSuffix(' \u00D710\u207B\u2078')
+        self.damping_sb.setSuffix(' \u00D710\u207B\u2076')
         self.damping_sb.setToolTip('Damping factor')
         self.damping_sb.setMaximum(100)
         self.damping_sb.setDecimals(0)
@@ -230,8 +230,6 @@ class interactor(QtWidgets.QWidget):
         super(interactor, self).__init__(parent)
         self.ui = main_window()
         self.ui.setup(self)
-        
-        
         
         self.ui.load_button.clicked.connect(self.load_file)
         self.ui.update_plot_button.clicked.connect(self.update_plot)
@@ -422,8 +420,8 @@ class interactor(QtWidgets.QWidget):
         data[data_ind,1],
         self.ui.modulus_sb.value()*1000,
         self.ui.ys_sb.value(),
-        self.ui.damping_sb.value()*1e-8,
-        bounds)
+        bounds,
+        self.ui.damping_sb.value()*1e-6)
         
         self.thread._signal.connect(self.signal_accept)
         self.thread.start()
@@ -530,7 +528,8 @@ class boundary_value_box(QtWidgets.QWidget):
         else:
             kin_labels = ['C1', 'C2', 'C3', 'C4', 'r1', 'r2', 'r3', 'r4']
             kin_text = ['C\u2081','C\u2082', 'C\u2083', 'C\u2084', 'r\u2081','r\u2082', 'r\u2083', 'r\u2084']
-            default_vals = [(10000, 100000), (1000, 50000), (100, 10000), (0,0), (100, 2000), (10, 500), (1, 100), (0, 0)]
+            # default_vals = [(10000, 100000), (1000, 50000), (100, 10000), (0,0), (100, 2000), (10, 500), (1, 100), (0, 0)]
+            default_vals = [(10000, 100000), (1000, 50000),(100, 10000), (0, 0), (100, 2000), (10, 500), (1, 100), (0, 0)]
             i = 0
             for entry in kin_labels:
                 self.val_dict[entry] = QtWidgets.QLineEdit()
