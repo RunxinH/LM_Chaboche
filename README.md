@@ -66,7 +66,7 @@ Function | Description
 `cal_Jacobian(params, input_data, E, sigmay, h=1e-6)` | Calculates the numerical Jacobian matrix using finite differences. Returns Jacobian (array shape: [num_data, num_params]).
 `cal_residual(params, input_data, output_data, E, sigmay)` | Computes residuals between experimental data (`output_data`) and model-predicted stress. Returns residual array.
 `LM_bounded(num_iter, params, input_data, output_data, E, sigmay, bounds=None, h=1e-6)` | Performs **bounded Levenberg–Marquardt optimization**. Iteratively updates parameters until convergence. Returns optimized parameter set.
-`main()` | Example workflow: loads sample data, runs optimization, prints parameters, calculates error metrics (SSE, R², RMSE), and plots fitted vs. experimental stress–strain curves.
+
 
 
 # Contributions and extensions
